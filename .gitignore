@@ -1,0 +1,9 @@
+.tox
+.coverage
+db.sqlite3
+*.egg-info
+*.pyc
+__pycache__
+.*.sw*
+build
+zerozero_envs

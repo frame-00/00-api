@@ -1,0 +1,12 @@
+image: continuumio/miniconda3:latest
+
+before_script:
+  - pip install .[dev]
+
+stages:
+  - Testing
+tox:
+  stage: Testing
+  script:
+  - pip install tox-conda
+  - tox
