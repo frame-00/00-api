@@ -1,0 +1,12 @@
+.tox
+.coverage
+db.sqlite3
+*.egg-info
+*.pyc
+__pycache__
+<<<<<<< HEAD
+*.swp
+*.swo
+=======
+.*.sw*
+>>>>>>> d12f3be (ignore vim files)
