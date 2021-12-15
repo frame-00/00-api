@@ -14,5 +14,8 @@ class ExamplesChild(models.Model):
     parent = models.ForeignKey(Example, on_delete=models.CASCADE)
 
 
+register(ExamplesChild)
+
+
 class ExampleM2M(models.Model):
     has_many = models.ManyToManyField(Example)

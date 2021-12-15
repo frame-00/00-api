@@ -4,6 +4,7 @@ from rest_framework import viewsets
 from rest_framework.permissions import BasePermission
 from rest_framework_csv.renderers import CSVStreamingRenderer
 
+from zerozero.forms import QueryForm
 from zerozero import serializers
 from zerozero import permissions
 
@@ -18,6 +19,8 @@ class _ZeroZeroViewSet(viewsets.ModelViewSet):
 
     @property
     def paginator(self):
+        """Excludes csv from being paged"""
+
         self._paginator = super().paginator
         if isinstance(self.request.accepted_renderer, CSVStreamingRenderer):
             self._paginator = None
@@ -28,10 +31,19 @@ class _ZeroZeroViewSet(viewsets.ModelViewSet):
         return super().dispatch(*args, **kwargs)
 
     def get_queryset(self):
-        """
-        Filter queryset from URL params
-        """
         queryset = self.Model.objects.all()
+        if self.action == "list":
+            query = self.request.GET.get("query")
+            if query:
+                form = QueryForm(self.Model, query)
+
+                if not form.is_valid():
+                    raise ValidationError({"detail": form.errors})
+
+                order = form.cleaned_data.get("order", None)
+
+                if order != None:
+                    queryset = queryset.order_by(*order)
         return queryset
 
     def get_serializer_class(self):
