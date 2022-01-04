@@ -8,6 +8,13 @@ class Example(factory.django.DjangoModelFactory):
         model = "test_app.example"
 
 
+class ExamplesChild(factory.django.DjangoModelFactory):
+    parent = factory.SubFactory(Example)
+
+    class Meta:
+        model = "test_app.exampleschild"
+
+
 class User(factory.django.DjangoModelFactory):
     class Meta:
         model = "auth.User"

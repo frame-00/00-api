@@ -15,6 +15,7 @@ setup(
         "Django~=3.2.9",
         "djangorestframework~=3.12.4",
         "djangorestframework-csv==2.1.1",
+        "pyyaml~=6.0",
     ],
     extras_require={
         "dev": [

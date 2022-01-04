@@ -23,7 +23,6 @@ def api_client():
 
 @pytest.mark.django_db
 def test_zerozero_viewset():
-    field_names = {"id", "char"}
     ExampleViewSet = api_views.ZeroZeroViewSet(model=models.Example)
     list_view = ExampleViewSet.as_view({"get": "list", "post": "create"})
     detail_view = ExampleViewSet.as_view(
@@ -40,7 +39,7 @@ def test_zerozero_viewset():
 def test_zerozero_list_view(api_client):
     user = factories.User()
     expected_count = 10
-    expected_columns = ["id", "char"]
+    expected_columns = ["url", "char"]
     examples = factories.Example.create_batch(expected_count)
     permission = auth_models.Permission.objects.get_by_natural_key(
         "view_example", "test_app", "example"
@@ -49,6 +48,26 @@ def test_zerozero_list_view(api_client):
     user.save()
     api_client.force_authenticate(user=user)
     url = reverse("test_app_example-list")
+    response = api_client.get(url)
+    assert 200 == response.status_code, response.content
+    response_json = json.loads(response.content)
+    assert expected_count == len(response_json["results"])
+    assert set(expected_columns) == set(response_json["results"][0].keys())
+
+
+@pytest.mark.django_db
+def test_zerozero_list_view_with_parent(api_client):
+    user = factories.User()
+    expected_count = 10
+    expected_columns = ["url", "parent"]
+    examples = factories.ExamplesChild.create_batch(expected_count)
+    permission = auth_models.Permission.objects.get_by_natural_key(
+        "view_exampleschild", "test_app", "exampleschild"
+    )
+    user.user_permissions.add(permission)
+    user.save()
+    api_client.force_authenticate(user=user)
+    url = reverse("test_app_exampleschild-list")
     response = api_client.get(url)
     assert 200 == response.status_code, response.content
     response_json = json.loads(response.content)
@@ -86,8 +105,15 @@ def test_zerozero_list_view_with_order(api_client):
     response_json = json.loads(response.content)
     assert 200 == response.status_code, response.content
     assert expected_count == len(response_json["results"])
-    assert model_to_dict(first_example) == response_json["results"][0]
-    assert model_to_dict(last_example) == response_json["results"][-1]
+    # TODO: make this way less terrible
+    first_result = response_json["results"][0]
+    last_result = response_json["results"][-1]
+    first_result["id"] = int(first_result["url"].split("/")[-2])
+    last_result["id"] = int(last_result["url"].split("/")[-2])
+    del first_result["url"]
+    del last_result["url"]
+    assert model_to_dict(first_example) == first_result
+    assert model_to_dict(last_example) == last_result
 
 
 @pytest.mark.django_db
