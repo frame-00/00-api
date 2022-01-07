@@ -1,7 +1,11 @@
 from django.db import transaction
 
-from rest_framework import viewsets
+from rest_framework import viewsets, renderers
+from rest_framework.response import Response
 from rest_framework.permissions import BasePermission
+from rest_framework.pagination import LimitOffsetPagination
+from rest_framework.utils import serializer_helpers
+
 from rest_framework_csv.renderers import CSVStreamingRenderer
 
 from zerozero.forms import QueryForm
@@ -11,11 +15,32 @@ from zerozero import permissions
 
 class _ZeroZeroViewSet(viewsets.ModelViewSet):
     Model = None
+    renderer_classes = [
+        renderers.JSONRenderer,
+        renderers.BrowsableAPIRenderer,
+        CSVStreamingRenderer,
+    ]
+    pagination_class = LimitOffsetPagination
 
     def __init__(self, *args, **kwargs):
         self.app_label = self.Model._meta.app_label
         self.model_name = self.Model._meta.model_name
         return super().__init__(*args, **kwargs)
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        if isinstance(self.request.accepted_renderer, CSVStreamingRenderer):
+            return_list = serializer_helpers.ReturnList(
+                queryset.values(), serializer=None
+            )  # here values are using default but be can be passed in
+            return Response(return_list)
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
 
     @property
     def paginator(self):
@@ -50,7 +75,6 @@ class _ZeroZeroViewSet(viewsets.ModelViewSet):
         return serializers.ZeroZeroSerializer(self.request, model=self.Model)
 
     def get_permissions(self):
-
         return [permissions.APIDefaultPermission(action=self.action)]
 
 

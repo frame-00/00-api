@@ -6,7 +6,7 @@ from zerozero.api_views import ZeroZeroViewSet
 from zerozero.registry import REGISTERED_MODELS
 
 router = DefaultRouter()
-for info in REGISTERED_MODELS:
+for model_path, info in REGISTERED_MODELS.items():
     model = info["model"]
     options = info["options"]
     CurrentViewSet = ZeroZeroViewSet(model=model)

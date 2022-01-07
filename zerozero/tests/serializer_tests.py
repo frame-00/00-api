@@ -5,6 +5,12 @@ from rest_framework.serializers import (
     IntegerField,
     CharField,
     HyperlinkedIdentityField,
+    HyperlinkedRelatedField,
+    ManyRelatedField,
+    PrimaryKeyRelatedField,
+    RelatedField,
+    SlugRelatedField,
+    StringRelatedField,
 )
 
 
@@ -20,5 +26,35 @@ def test_zerozero_serializer():
     fields = ExampleSerializer().fields
     assert expected_field_names == set(fields.keys())
     assert isinstance(fields["char"], CharField)
+    assert isinstance(fields["url"], HyperlinkedIdentityField)
+    assert expected_view_name == fields["url"].view_name
+
+
+@pytest.mark.django_db
+def test_zerozero_serializer_with_relation():
+    expected_field_names = {"url", "parent"}
+    expected_view_name = "test_app_exampleschild-detail"
+    expected_parent_view_name = "test_app_example-detail"
+    ExamplesChildSerializer = serializers.ZeroZeroSerializer(
+        model=models.ExamplesChild
+    )
+    fields = ExamplesChildSerializer().fields
+    assert expected_field_names == set(fields.keys())
+    assert isinstance(fields["parent"], HyperlinkedRelatedField)
+    assert isinstance(fields["url"], HyperlinkedIdentityField)
+    assert expected_view_name == fields["url"].view_name
+    assert expected_parent_view_name == fields["parent"].view_name
+
+
+@pytest.mark.django_db
+def test_zerozero_serializer_with_relation_and_depth():
+    expected_field_names = {"url", "parent"}
+    expected_view_name = "test_app_exampleschild-detail"
+    ExamplesChildSerializer = serializers.ZeroZeroSerializer(
+        model=models.ExamplesChild, depth=2
+    )
+    fields = ExamplesChildSerializer().fields
+    assert expected_field_names == set(fields.keys())
+    assert isinstance(fields["parent"], serializers.ZeroZeroSerializer)
     assert isinstance(fields["url"], HyperlinkedIdentityField)
     assert expected_view_name == fields["url"].view_name

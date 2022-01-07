@@ -1,5 +1,8 @@
 import pytest
 import json
+import csv
+
+from io import StringIO
 
 from rest_framework.serializers import IntegerField, CharField
 
@@ -56,6 +59,32 @@ def test_zerozero_list_view(api_client):
 
 
 @pytest.mark.django_db
+def test_zerozero_list_view_as_csv(api_client):
+    user = factories.User()
+    expected_count = 10
+    expected_columns = [
+        "id",
+        "char",
+        "excluded_field",
+    ]  # TODO: remove excluded field
+    examples = factories.Example.create_batch(expected_count)
+    permission = auth_models.Permission.objects.get_by_natural_key(
+        "view_example", "test_app", "example"
+    )
+    user.user_permissions.add(permission)
+    user.save()
+    api_client.force_authenticate(user=user)
+    url = reverse("test_app_example-list")
+    response = api_client.get(url, {"format": "csv"})
+    assert 200 == response.status_code, response.content
+    response_csv = list(
+        csv.reader(response.content.decode("utf-8").splitlines(), delimiter=",")
+    )
+    assert expected_count + 1 == len(response_csv)
+    assert set(expected_columns) == set(response_csv[0])
+
+
+@pytest.mark.django_db
 def test_zerozero_list_view_with_parent(api_client):
     user = factories.User()
     expected_count = 10
@@ -92,8 +121,8 @@ def test_zerozero_list_view_with_order(api_client):
         expected_count
     )  # all start char values startwith with char
     expected_count += 2  # to account for the next two
-    first_example = factories.Example.create(char="dhar 99")
-    last_example = factories.Example.create(char="bhar 99")
+    first_example = model_to_dict(factories.Example.create(char="dhar 99"))
+    last_example = model_to_dict(factories.Example.create(char="bhar 99"))
     permission = auth_models.Permission.objects.get_by_natural_key(
         "view_example", "test_app", "example"
     )
@@ -112,13 +141,15 @@ def test_zerozero_list_view_with_order(api_client):
     last_result["id"] = int(last_result["url"].split("/")[-2])
     del first_result["url"]
     del last_result["url"]
-    assert model_to_dict(first_example) == first_result
-    assert model_to_dict(last_example) == last_result
+    del first_example["excluded_field"]
+    del last_example["excluded_field"]
+    assert first_example == first_result
+    assert last_example == last_result
 
 
 @pytest.mark.django_db
 def test_zerozero_create_view(api_client):
-    expected_example = {"char": "test"}
+    expected_example = {"char": "test", "excluded_field": ""}
     user = factories.User()
     permission = auth_models.Permission.objects.get_by_natural_key(
         "add_example", "test_app", "example"
@@ -161,6 +192,7 @@ def test_zerozero_update_view(api_client):
     assert 1 == examples.count()
     create_values = examples.values()[0]
     del create_values["id"]
+    del create_values["excluded_field"]
     assert expected_example == create_values
 
 
@@ -188,6 +220,7 @@ def test_zerozero_partial_update_view(api_client):
     assert 1 == examples.count()
     create_values = examples.values()[0]
     del create_values["id"]
+    del create_values["excluded_field"]
     assert expected_example == create_values
 
 

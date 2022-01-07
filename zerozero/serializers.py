@@ -21,6 +21,8 @@ from rest_framework.relations import (
     StringRelatedField,
 )
 
+from zerozero.registry import get_model_path, REGISTERED_MODELS
+
 
 def get_detail_view_name(model):
     """
@@ -46,7 +48,6 @@ def get_relation_kwargs(field_name, relation_info):
         "queryset": related_model._default_manager,
         "view_name": get_detail_view_name(related_model),
     }
-
     if to_many:
         kwargs["many"] = True
 
@@ -105,31 +106,6 @@ class _ZeroZeroSerializer(serializers.HyperlinkedModelSerializer):
     def is_valid(self, raise_exception=False):
         return super().is_valid(raise_exception=raise_exception)
 
-    def build_field(self, field_name, info, model_class, nested_depth):
-        """
-        Return a two tuple of (cls, kwargs) to build a serializer field with.
-        """
-        if field_name in info.fields_and_pk:
-            model_field = info.fields_and_pk[field_name]
-            return self.build_standard_field(field_name, model_field)
-
-        elif field_name in info.relations:
-            relation_info = info.relations[field_name]
-            if not nested_depth:
-                return self.build_relational_field(field_name, relation_info)
-            else:
-                return self.build_nested_field(
-                    field_name, relation_info, nested_depth
-                )
-
-        elif hasattr(model_class, field_name):
-            return self.build_property_field(field_name, model_class)
-
-        elif field_name == self.url_field_name:
-            return self.build_url_field(field_name, model_class)
-
-        return self.build_unknown_field(field_name, model_class)
-
     def build_relational_field(self, field_name, relation_info):
         """
         Create fields for forward and reverse relationships.
@@ -161,13 +137,10 @@ class _ZeroZeroSerializer(serializers.HyperlinkedModelSerializer):
         return field_class, field_kwargs
 
     def build_nested_field(self, field_name, relation_info, nested_depth):
-        class NestedSerializer(ZeroZeroSerializer):
-            class Meta:
-                model = relation_info.related_model
-                depth = nested_depth - 1
-                fields = "__all__"
+        field_class = ZeroZeroSerializer(
+            model=relation_info.related_model, depth=nested_depth - 1
+        )
 
-        field_class = NestedSerializer
         field_kwargs = get_nested_relation_kwargs(relation_info)
 
         return field_class, field_kwargs
@@ -176,11 +149,21 @@ class _ZeroZeroSerializer(serializers.HyperlinkedModelSerializer):
 class ZeroZeroSerializer:
     def __new__(cls, *args, **kwargs):
         Model = kwargs.pop("model")
-        exclude_value = kwargs.pop("exclude", [])
+        model_path = get_model_path(Model)
+        registered_info = REGISTERED_MODELS[model_path]
+        exclude_value = registered_info["options"].get("exclude", [])
+        depth_value = kwargs.pop("depth", 0)
+        # _value is added to the above fields b/c Python garbase collects them
+        # if the match properties in class Meta below
 
         class ModelSerializer(_ZeroZeroSerializer):
+            @property
+            def __class__(self):
+                return cls
+
             class Meta:
                 model = Model
+                depth = depth_value
                 exclude = exclude_value
                 ref_name = "{}.{}".format(
                     Model._meta.app_label, Model._meta.model_name
