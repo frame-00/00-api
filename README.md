@@ -3,20 +3,21 @@
 
 ## Developer - Getting Started
 
-
+```
   conda env create -f conda_env.yml
   conda activate zero_zero
   pip install -e ."[dev]"
-
+```
 
 ## Testing
 
   pytest
 
 ## Run test App
-  ./manage.py migrate
-  ,/manage,py runserver
-
+```
+./manage.py migrate
+./manage,py runserver
+```
 
 ## TODO
 

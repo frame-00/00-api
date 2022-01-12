@@ -17,16 +17,17 @@ INSTALLED_APPS = (
     "django.contrib.sessions",
     "django.contrib.staticfiles",
     "rest_framework",
+    "rest_framework.authtoken",
     "zerozero",
     "test_app",
 )
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.TokenAuthentication",
         "rest_framework.authentication.SessionAuthentication",
         "rest_framework.authentication.BasicAuthentication",
     ],
-    "PAGE_SIZE": 100,
 }
 
 ROOT_URLCONF = "test_app.urls"

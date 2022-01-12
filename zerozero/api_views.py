@@ -1,16 +1,13 @@
 from django.db import transaction
-
-from rest_framework import viewsets, renderers
-from rest_framework.response import Response
+from rest_framework import renderers, viewsets
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import BasePermission
-from rest_framework.pagination import LimitOffsetPagination
+from rest_framework.response import Response
 from rest_framework.utils import serializer_helpers
-
 from rest_framework_csv.renderers import CSVStreamingRenderer
 
+from zerozero import permissions, serializers
 from zerozero.forms import QueryForm
-from zerozero import serializers
-from zerozero import permissions
 
 
 class _ZeroZeroViewSet(viewsets.ModelViewSet):
@@ -20,7 +17,8 @@ class _ZeroZeroViewSet(viewsets.ModelViewSet):
         renderers.BrowsableAPIRenderer,
         CSVStreamingRenderer,
     ]
-    pagination_class = LimitOffsetPagination
+    pagination_class = PageNumberPagination
+    paginate_by = 1000
 
     def __init__(self, *args, **kwargs):
         self.app_label = self.Model._meta.app_label
