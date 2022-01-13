@@ -21,7 +21,7 @@ from test_app import models
 @pytest.mark.django_db
 def test_zerozero_serializer():
     expected_field_names = {"url", "char"}
-    expected_view_name = "test_app_example-detail"
+    expected_view_name = "test_app_Example-detail"
     ExampleSerializer = serializers.ZeroZeroSerializer(model=models.Example)
     fields = ExampleSerializer().fields
     assert expected_field_names == set(fields.keys())
@@ -33,8 +33,8 @@ def test_zerozero_serializer():
 @pytest.mark.django_db
 def test_zerozero_serializer_with_relation():
     expected_field_names = {"url", "parent"}
-    expected_view_name = "test_app_exampleschild-detail"
-    expected_parent_view_name = "test_app_example-detail"
+    expected_view_name = "test_app_ExamplesChild-detail"
+    expected_parent_view_name = "test_app_Example-detail"
     ExamplesChildSerializer = serializers.ZeroZeroSerializer(
         model=models.ExamplesChild
     )
@@ -49,7 +49,7 @@ def test_zerozero_serializer_with_relation():
 @pytest.mark.django_db
 def test_zerozero_serializer_with_relation_and_depth():
     expected_field_names = {"url", "parent"}
-    expected_view_name = "test_app_exampleschild-detail"
+    expected_view_name = "test_app_ExamplesChild-detail"
     ExamplesChildSerializer = serializers.ZeroZeroSerializer(
         model=models.ExamplesChild, depth=2
     )

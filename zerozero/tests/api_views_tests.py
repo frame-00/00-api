@@ -50,7 +50,7 @@ def test_zerozero_list_view(api_client):
     user.user_permissions.add(permission)
     user.save()
     api_client.force_authenticate(user=user)
-    url = reverse("test_app_example-list")
+    url = reverse("test_app_Example-list")
     response = api_client.get(url)
     assert 200 == response.status_code, response.content
     response_json = json.loads(response.content)
@@ -74,7 +74,7 @@ def test_zerozero_list_view_as_csv(api_client):
     user.user_permissions.add(permission)
     user.save()
     api_client.force_authenticate(user=user)
-    url = reverse("test_app_example-list")
+    url = reverse("test_app_Example-list")
     response = api_client.get(url, {"format": "csv"})
     assert 200 == response.status_code, response.content
     response_csv = list(
@@ -96,7 +96,7 @@ def test_zerozero_list_view_with_parent(api_client):
     user.user_permissions.add(permission)
     user.save()
     api_client.force_authenticate(user=user)
-    url = reverse("test_app_exampleschild-list")
+    url = reverse("test_app_ExamplesChild-list")
     response = api_client.get(url)
     assert 200 == response.status_code, response.content
     response_json = json.loads(response.content)
@@ -129,7 +129,7 @@ def test_zerozero_list_view_with_order(api_client):
     user.user_permissions.add(permission)
     user.save()
     api_client.force_authenticate(user=user)
-    url = reverse("test_app_example-list")
+    url = reverse("test_app_Example-list")
     response = api_client.get(url, parameters)
     response_json = json.loads(response.content)
     assert 200 == response.status_code, response.content
@@ -157,7 +157,7 @@ def test_zerozero_create_view(api_client):
     user.user_permissions.add(permission)
     user.save()
     api_client.force_authenticate(user=user)
-    url = reverse("test_app_example-list")
+    url = reverse("test_app_Example-list")
     response = api_client.post(url, expected_example)
     assert 201 == response.status_code, response.content
     response_json = json.loads(response.content)
@@ -180,7 +180,7 @@ def test_zerozero_update_view(api_client):
     user.save()
     api_client.force_authenticate(user=user)
     url = reverse(
-        "test_app_example-detail",
+        "test_app_Example-detail",
         args=[
             example.pk,
         ],
@@ -208,7 +208,7 @@ def test_zerozero_partial_update_view(api_client):
     user.save()
     api_client.force_authenticate(user=user)
     url = reverse(
-        "test_app_example-detail",
+        "test_app_Example-detail",
         args=[
             example.pk,
         ],
@@ -235,7 +235,7 @@ def test_zerozero_delete_view(api_client):
     user.save()
     api_client.force_authenticate(user=user)
     url = reverse(
-        "test_app_example-detail",
+        "test_app_Example-detail",
         args=[
             example.pk,
         ],

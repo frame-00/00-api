@@ -29,7 +29,7 @@ def get_detail_view_name(model):
     Given a model class, return the view name to use for URL relationships
     that refer to instances of the model.
     """
-    return f"{model._meta.app_label.lower()}_{model._meta.model_name.lower()}-detail"
+    return f"{model._meta.app_label}_{model.__name__}-detail"
 
 
 def get_relation_kwargs(field_name, relation_info):
