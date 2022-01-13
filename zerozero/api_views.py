@@ -6,8 +6,14 @@ from rest_framework.response import Response
 from rest_framework.utils import serializer_helpers
 from rest_framework_csv.renderers import CSVStreamingRenderer
 
-from zerozero import permissions, serializers
+from zerozero import permissions, serializers, metadata
 from zerozero.forms import QueryForm
+
+
+class ZeroZeroPagination(PageNumberPagination):
+    page_size = 1000
+    page_size_query_param = "page_size"
+    max_page_size = 10000
 
 
 class _ZeroZeroViewSet(viewsets.ModelViewSet):
@@ -17,12 +23,14 @@ class _ZeroZeroViewSet(viewsets.ModelViewSet):
         renderers.BrowsableAPIRenderer,
         CSVStreamingRenderer,
     ]
-    pagination_class = PageNumberPagination
-    paginate_by = 1000
+    pagination_class = ZeroZeroPagination
+    metadata_class = metadata.ZeroZeroMetadata
 
     def __init__(self, *args, **kwargs):
         self.app_label = self.Model._meta.app_label
         self.model_name = self.Model._meta.model_name
+        self.name = ".".join([self.Model._meta.app_label, self.Model.__name__])
+
         return super().__init__(*args, **kwargs)
 
     def list(self, request, *args, **kwargs):
@@ -43,7 +51,6 @@ class _ZeroZeroViewSet(viewsets.ModelViewSet):
     @property
     def paginator(self):
         """Excludes csv from being paged"""
-
         self._paginator = super().paginator
         if isinstance(self.request.accepted_renderer, CSVStreamingRenderer):
             self._paginator = None

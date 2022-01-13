@@ -54,8 +54,8 @@ def test_zerozero_list_view(api_client):
     response = api_client.get(url)
     assert 200 == response.status_code, response.content
     response_json = json.loads(response.content)
-    assert expected_count == len(response_json)
-    assert set(expected_columns) == set(response_json[0].keys())
+    assert expected_count == len(response_json["results"])
+    assert set(expected_columns) == set(response_json["results"][0].keys())
 
 
 @pytest.mark.django_db
@@ -100,8 +100,8 @@ def test_zerozero_list_view_with_parent(api_client):
     response = api_client.get(url)
     assert 200 == response.status_code, response.content
     response_json = json.loads(response.content)
-    assert expected_count == len(response_json)
-    assert set(expected_columns) == set(response_json[0].keys())
+    assert expected_count == len(response_json["results"])
+    assert set(expected_columns) == set(response_json["results"][0].keys())
 
 
 @pytest.mark.django_db
@@ -133,10 +133,10 @@ def test_zerozero_list_view_with_order(api_client):
     response = api_client.get(url, parameters)
     response_json = json.loads(response.content)
     assert 200 == response.status_code, response.content
-    assert expected_count == len(response_json)
+    assert expected_count == len(response_json["results"])
     # TODO: make this way less terrible
-    first_result = response_json[0]
-    last_result = response_json[-1]
+    first_result = response_json["results"][0]
+    last_result = response_json["results"][-1]
     first_result["id"] = int(first_result["url"].split("/")[-2])
     last_result["id"] = int(last_result["url"].split("/")[-2])
     del first_result["url"]
