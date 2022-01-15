@@ -16,7 +16,6 @@ class ZeroZeroRootView(APIRootView):
         # Return a plain {"name": "hyperlink"} response.
         ret = OrderedDict()
         namespace = request.resolver_match.namespace
-        breakpoint()
         for key, url_name in self.api_root_dict.items():
             if namespace:
                 url_name = namespace + ":" + url_name
