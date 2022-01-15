@@ -4,6 +4,8 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import BasePermission
 from rest_framework.response import Response
 from rest_framework.utils import serializer_helpers
+from rest_framework.exceptions import ValidationError
+
 from rest_framework_csv.renderers import CSVStreamingRenderer
 
 from zerozero import permissions, serializers, metadata
@@ -35,9 +37,30 @@ class _ZeroZeroViewSet(viewsets.ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
+        query = self.request.GET.get("query")
+        if query:
+            form = QueryForm(self.Model, query)
+
+            if not form.is_valid():
+                raise ValidationError({"detail": form.errors})
+
+            where = form.cleaned_data.get("where", None)
+            if where != None:
+                queryset = queryset.filter(where)
+
+            order = form.cleaned_data.get("order", None)
+            if order != None:
+                queryset = queryset.order_by(*order)
+
         if isinstance(self.request.accepted_renderer, CSVStreamingRenderer):
+            if query:
+                fields = form.cleaned_data.get("fields", None)
+            if query and fields != None:
+                queryset = queryset.values(*fields)
+            else:
+                queryset = queryset.values()
             return_list = serializer_helpers.ReturnList(
-                queryset.values(), serializer=None
+                queryset, serializer=None
             )  # here values are using default but be can be passed in
             return Response(return_list)
         page = self.paginate_queryset(queryset)
@@ -62,18 +85,6 @@ class _ZeroZeroViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         queryset = self.Model.objects.all()
-        if self.action == "list":
-            query = self.request.GET.get("query")
-            if query:
-                form = QueryForm(self.Model, query)
-
-                if not form.is_valid():
-                    raise ValidationError({"detail": form.errors})
-
-                order = form.cleaned_data.get("order", None)
-
-                if order != None:
-                    queryset = queryset.order_by(*order)
         return queryset
 
     def get_serializer_class(self):

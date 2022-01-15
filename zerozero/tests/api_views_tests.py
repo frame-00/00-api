@@ -59,6 +59,26 @@ def test_zerozero_list_view(api_client):
 
 
 @pytest.mark.django_db
+def test_zerozero_list_view(api_client):
+    user = factories.User()
+    expected_count = 10
+    expected_columns = ["url", "char"]
+    examples = factories.Example.create_batch(expected_count)
+    permission = auth_models.Permission.objects.get_by_natural_key(
+        "view_example", "test_app", "example"
+    )
+    user.user_permissions.add(permission)
+    user.save()
+    api_client.force_authenticate(user=user)
+    url = reverse("test_app_Example-list")
+    response = api_client.get(url)
+    assert 200 == response.status_code, response.content
+    response_json = json.loads(response.content)
+    assert expected_count == len(response_json["results"])
+    assert set(expected_columns) == set(response_json["results"][0].keys())
+
+
+@pytest.mark.django_db
 def test_zerozero_list_view_as_csv(api_client):
     user = factories.User()
     expected_count = 10
@@ -76,6 +96,35 @@ def test_zerozero_list_view_as_csv(api_client):
     api_client.force_authenticate(user=user)
     url = reverse("test_app_Example-list")
     response = api_client.get(url, {"format": "csv"})
+    assert 200 == response.status_code, response.content
+    response_csv = list(
+        csv.reader(response.content.decode("utf-8").splitlines(), delimiter=",")
+    )
+    assert expected_count + 1 == len(response_csv)
+    assert set(expected_columns) == set(response_csv[0])
+
+
+@pytest.mark.django_db
+def test_zerozero_list_view_as_csv_with_fields(api_client):
+    user = factories.User()
+    expected_count = 10
+    expected_columns = [
+        "id",
+        "char",
+        "children__id",
+    ]  # TODO: remove excluded field
+    examples = factories.Example.create_batch(expected_count)
+    permission = auth_models.Permission.objects.get_by_natural_key(
+        "view_example", "test_app", "example"
+    )
+    user.user_permissions.add(permission)
+    user.save()
+    api_client.force_authenticate(user=user)
+    url = reverse("test_app_Example-list")
+    response = api_client.get(
+        url,
+        {"format": "csv", "query": json.dumps({"fields": expected_columns})},
+    )
     assert 200 == response.status_code, response.content
     response_csv = list(
         csv.reader(response.content.decode("utf-8").splitlines(), delimiter=",")
@@ -145,6 +194,109 @@ def test_zerozero_list_view_with_order(api_client):
     del last_example["excluded_field"]
     assert first_example == first_result
     assert last_example == last_result
+
+
+@pytest.mark.parametrize(
+    "expected_count,where",
+    [
+        (
+            4,
+            {
+                "char": "bar",
+            },
+        ),
+        (
+            5,
+            {
+                "AND": [
+                    {
+                        "char__contains": "bam",
+                    },
+                    {"char__contains": "bar"},
+                ],
+            },
+        ),
+        (
+            9,
+            {
+                "OR": [
+                    {
+                        "char": "bar",
+                    },
+                    {"char__contains": "bam"},
+                ],
+            },
+        ),
+        (
+            14,
+            {
+                "NOT": {
+                    "char": "bar bam",
+                },
+            },
+        ),
+        (
+            5,
+            {
+                "NOT": {
+                    "NOT": {
+                        "char": "bar bam",
+                    }
+                },
+            },
+        ),
+        (
+            19,
+            {
+                "OR": [
+                    {
+                        "char": "bar",
+                    },
+                    {
+                        "OR": [
+                            {"char__contains": "bam"},
+                            {"char__contains": "char"},
+                        ]
+                    },
+                ],
+            },
+        ),
+        (
+            0,  # Check its evaluating out to inside
+            {
+                "AND": [
+                    {
+                        "char": "bar",
+                    },
+                    {
+                        "OR": [
+                            {"char__contains": "bam"},
+                            {"char__contains": "char"},
+                        ]
+                    },
+                ],
+            },
+        ),
+    ],
+)
+@pytest.mark.django_db
+def test_zerozero_list_view_with_where(api_client, expected_count, where):
+    user = factories.User()
+    parameters = {"query": json.dumps({"where": where})}
+    examples = factories.Example.create_batch(10)
+    included_examples = factories.Example.create_batch(4, char="bar")
+    included_examples = factories.Example.create_batch(5, char="bar bam")
+    permission = auth_models.Permission.objects.get_by_natural_key(
+        "view_example", "test_app", "example"
+    )
+    user.user_permissions.add(permission)
+    user.save()
+    api_client.force_authenticate(user=user)
+    url = reverse("test_app_Example-list")
+    response = api_client.get(url, parameters)
+    response_json = json.loads(response.content)
+    assert 200 == response.status_code, response.content
+    assert expected_count == len(response_json["results"])
 
 
 @pytest.mark.django_db
