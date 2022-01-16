@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from distutils.core import setup
+from setuptools import setup
 
 setup(
     name="django00",
@@ -10,6 +10,7 @@ setup(
     author_email="glassresistor@gmail.com",
     url="",
     packages=["zerozero"],
+    license_files=("LICENSE", "LICENSE.CNPLv7.md", "LICENSE.proprietary.md"),
     include_package_data=True,
     install_requires=[
         "Django~=3.2.9",
