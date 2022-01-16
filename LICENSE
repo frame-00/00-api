@@ -1,11 +1,11 @@
 Copyright 2021 Mikela Clemmons
 
-Django 00 is licensed under the terms of the The Cooperative Nonviolent Public License and a proprietary license.
+00-api is licensed under the terms of the The Cooperative Nonviolent Public License and a proprietary license.
 
-If you use Django 00 software but don't want to adhere to the The Cooperative Nonviolent Public License, you can purchase a commercial license from Mikela Clemmons(glassresistor@gmail.com).
+If you use 00-api software but don't want to adhere to the The Cooperative Nonviolent Public License, you can purchase a commercial license from Mikela Clemmons(glassresistor@gmail.com).
 
 The terms of each license can be found in the main directory of the Django 00 source
 repository:
 
-The Cooperative Nonviolent Public License: https://gitlab.com/django00/django00/-/raw/main/LICENSE.CNPLv7.md
-Proprietary License: https://gitlab.com/django00/django00/-/raw/main/LICENSE.proprietary.md
+The Cooperative Nonviolent Public License: https://gitlab.com/frame-00/00-api/-/raw/main/LICENSE.CNPLv7.md
+Proprietary License: https://gitlab.com/frame-00/00-api/-/raw/main/LICENSE.proprietary.md
