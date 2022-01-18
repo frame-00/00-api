@@ -3,7 +3,7 @@
 from setuptools import setup
 
 setup(
-    name="django00",
+    name="00-api",
     version="0.0.0",
     description="",
     author="Mikela Clemmons",
