@@ -24,4 +24,9 @@ register(ExamplesChild)
 
 
 class ExampleM2M(models.Model):
-    has_many = models.ManyToManyField(Example)
+    has_many = models.ManyToManyField(
+        Example, related_name="examplem2ms", related_query_name="examplem2ms"
+    )
+
+
+register(ExampleM2M)

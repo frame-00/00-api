@@ -44,9 +44,9 @@ for model_path, info in REGISTERED_MODELS.items():
     options = info["options"]
     CurrentViewSet = ZeroZeroViewSet(model=model)
     router.register(
-        f"{model._meta.app_label}/{model.__name__}",
+        f"{model._meta.app_label}.{model.__name__}",
         CurrentViewSet,
-        basename=f"{model._meta.app_label}_{model.__name__}",
+        basename=f"{model._meta.app_label}.{model.__name__}",
     )
 
 urlpatterns = router.urls

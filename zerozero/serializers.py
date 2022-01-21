@@ -29,7 +29,7 @@ def get_detail_view_name(model):
     Given a model class, return the view name to use for URL relationships
     that refer to instances of the model.
     """
-    return f"{model._meta.app_label}_{model.__name__}-detail"
+    return f"{model._meta.app_label}.{model.__name__}-detail"
 
 
 def get_relation_kwargs(field_name, relation_info):
@@ -122,7 +122,6 @@ class _ZeroZeroSerializer(serializers.HyperlinkedModelSerializer):
         ):
             field_kwargs["slug_field"] = to_field
             field_class = self.serializer_related_to_field
-
         # `view_name` is only valid for hyperlinked relationships.
         if not issubclass(field_class, HyperlinkedRelatedField):
             field_kwargs.pop("view_name", None)
