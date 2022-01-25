@@ -7,6 +7,7 @@ ACTION_TO_PERMISSION = {
     "update": "change",
     "partial_update": "change",
     "destroy": "delete",
+    "metadata": "view",
 }
 
 

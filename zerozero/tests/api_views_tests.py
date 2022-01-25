@@ -12,16 +12,10 @@ from django.forms.models import model_to_dict
 from zerozero import api_views
 from test_app import models
 
-from rest_framework.test import APIClient
 from django.urls import reverse
 from django.forms.models import model_to_dict
 from django.contrib.auth import models as auth_models
 from zerozero.tests import factories
-
-
-@pytest.fixture
-def api_client():
-    return APIClient()
 
 
 @pytest.mark.django_db
@@ -39,17 +33,11 @@ def test_zerozero_viewset():
 
 
 @pytest.mark.django_db
-def test_zerozero_list_view(api_client):
-    user = factories.User()
+def test_zerozero_list_view(api_client_with_example_access):
+    api_client, user = api_client_with_example_access
     expected_count = 10
     expected_columns = ["url", "char"]
     examples = factories.Example.create_batch(expected_count)
-    permission = auth_models.Permission.objects.get_by_natural_key(
-        "view_example", "test_app", "example"
-    )
-    user.user_permissions.add(permission)
-    user.save()
-    api_client.force_authenticate(user=user)
     url = reverse("test_app.Example-list")
     response = api_client.get(url)
     assert 200 == response.status_code, response.content

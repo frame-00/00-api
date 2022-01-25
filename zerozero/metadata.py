@@ -8,53 +8,76 @@ from rest_framework.metadata import SimpleMetadata
 
 
 class ZeroZeroMetadata(SimpleMetadata):
-    def get_field_info(self, field):
-        """
-        Given an instance of a serializer field, return a dictionary
-        of metadata about it.
-        """
-        field_info = OrderedDict()
-        field_info["type"] = self.label_lookup[field]
-        field_info["required"] = getattr(field, "required", False)
+    def determine_metadata(self, request, view):
+        try:
+            metadata = super().determine_metadata(request, view)
+        except NotImplementedError:
+            metadata = {}
+        except AttributeError:
+            metadata = {}
 
-        attrs = [
-            "read_only",
-            "label",
-            "help_text",
-            "min_length",
-            "max_length",
-            "min_value",
-            "max_value",
-        ]
-
-        for attr in attrs:
-            value = getattr(field, attr, None)
-            if value is not None and value != "":
-                field_info[attr] = force_str(value, strings_only=True)
-
-        if getattr(field, "child", None):
-            field_info["child"] = self.get_field_info(field.child)
-        elif getattr(field, "fields", None):
-            field_info["children"] = self.get_serializer_info(field)
-
+        root_view_names = ["APIRootView", "APIRoot"]
         if (
-            not field_info.get("read_only")
-            and not isinstance(
-                field, (serializers.RelatedField, serializers.ManyRelatedField)
-            )
-            and hasattr(field, "choices")
+            view.__class__.__name__ in root_view_names
+            or view in root_view_names
         ):
-            field_info["choices"] = [
-                {
-                    "value": choice_value,
-                    "display_name": force_str(choice_name, strings_only=True),
-                }
-                for choice_value, choice_name in field.choices.items()
-            ]
-        if isinstance(
-            field, (serializers.RelatedField, serializers.ManyRelatedField)
-        ):
-            field_info["related_resource"] = field.view_name.replace(
-                "-detail", ""
-            )
-        return field_info
+            return self.root_metadata(metadata, view)
+
+        serializer = view.get_serializer_class()
+        serializer_instance = view.get_serializer()
+
+        fields_metadata = {}
+
+        for field in serializer_instance.fields.keys():
+            instance_field = serializer_instance.fields[field]
+            field_metadata = get_field_dict(field, serializer_instance, request)
+
+            fields_metadata[field] = field_metadata
+        metadata["fields"] = fields_metadata
+        return metadata
+
+
+FIELD_TO_TYPE = {
+    "BooleanField": ("boolean", "checkbox"),
+    "NullBooleanField": ("boolean", "null-boolean"),
+    "IntegerField": ("number", "number"),
+    "FloatField": ("number", "number"),
+    "DecimalField": ("number", "number"),
+    "ForeignKey": ("string", "relation"),
+    "OneToOneField": ("string", "relation"),
+    "OneToOneRel": ("string", "relation"),
+    "HyperlinkedIdentityField": ("string", "relation"),
+    "HyperlinkedRelatedField": ("string", "relation"),
+    "PrimaryKeyRelatedField": ("string", "relation"),
+    "ManyToOneRel": ("string", "relation"),
+    "GenericRelation": ("object", "tomany-relation"),
+    "text": ("string", "textarea"),
+    "choice": ("string", "select"),
+    "DateField": ("string", "date"),
+    "TimeField": ("string", "time"),
+    "DateTimeField": ("string", "datetime"),
+    "CharField": ("string", "text"),
+    "ChoiceField": ("string", "select"),
+    "EmailField": ("string", "email"),
+    "URLField": ("string", "url"),
+    "ManyToManyField": ("object", "tomany-relation"),
+    "ManyToManyRel": ("object", "manytomany-lists"),
+    "GenericRelatedField": ("string", "generic-relation"),
+    "DurationField": ("string", "duration"),
+}
+
+
+def get_field_dict(field, serializer, request):
+    form_field = serializer.fields[field]
+    field_meta = {}
+    field_meta["name"] = field
+    field_meta["type"] = FIELD_TO_TYPE[type(form_field).__name__][1]
+    field_meta["json_type"] = FIELD_TO_TYPE[type(form_field).__name__][0]
+    field_meta["required"] = form_field.required
+    field_meta["read_only"] = form_field.read_only
+    if hasattr(form_field, "view_name"):
+        field_meta["related_url"] = form_field.reverse(
+            form_field.view_name.replace("detail", "list"), request=request
+        )
+        field_meta["related_name"] = form_field.view_name.replace("-detail", "")
+    return field_meta
