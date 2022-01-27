@@ -1,0 +1,14 @@
+<div>
+    <h3>Generate a new token below:</h3>
+    <form method="post" action="">
+        {% csrf_token %}
+        <input type="submit" value="Submit" name="token-gen-form"/>
+    </form>
+    {% block content %}
+    {% if messages %}
+    {% for message in messages %}
+    <p{% if message.tags %} class =" {{ message.tags }} " {% endif %}> {{ message }}</p>
+    {% endfor %}
+{% endif %}
+    {% endblock %}
+</div>

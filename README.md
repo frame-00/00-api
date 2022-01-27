@@ -26,7 +26,7 @@ path("zerozero/api/", include("zerozero.api_urls")),
 ```
 
 ```
-pip install -e git+https://gitlab.com/frame-00/00-api.git#zerozero-api
+pip install -e git+https://gitlab.com/frame-00/00-api.git#egg=00-api
 ```
 
 

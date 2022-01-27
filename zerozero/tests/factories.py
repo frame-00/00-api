@@ -1,4 +1,5 @@
 import factory
+from rest_framework.authtoken.models import Token
 
 
 class Example(factory.django.DjangoModelFactory):
@@ -18,5 +19,3 @@ class ExamplesChild(factory.django.DjangoModelFactory):
 class User(factory.django.DjangoModelFactory):
     class Meta:
         model = "auth.User"
-
-    first_name = factory.Sequence(lambda n: "Agent %03d" % n)
