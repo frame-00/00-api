@@ -37,11 +37,12 @@ def test_token_view_post(client_with_user):
 
 @pytest.mark.django_db
 def test_token_view_post_with_existing_token(client_with_user):
-    # TODO: do this with factory boy instead
     client, user = client_with_user
-    response = client.post(reverse_lazy("token-generator"), follow=True)
-    tokens = Token.objects.filter(user=user)
-    token = tokens[0]
-    assert token.key in response.content.decode("utf-8")
+    token = Token.objects.create(user=user)
     response = client.post(reverse_lazy("token-generator"), follow=True)
     assert token.key not in response.content.decode("utf-8")
+    # test token changes after that
+    new_token = Token.objects.filter(user=user)[0]
+    assert token.key != new_token
+    response = client.post(reverse_lazy("token-generator"), follow=True)
+    assert new_token.key not in response.content.decode("utf-8")
