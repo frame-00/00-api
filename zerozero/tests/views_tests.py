@@ -39,10 +39,10 @@ def test_token_view_post(client_with_user):
 def test_token_view_post_with_existing_token(client_with_user):
     client, user = client_with_user
     token = Token.objects.create(user=user)
-    response = client.post(reverse_lazy("token-generator"), follow=True)
+    response = client.get(reverse_lazy("token-generator"))
     assert token.key not in response.content.decode("utf-8")
-    # test token changes after that
-    new_token = Token.objects.filter(user=user)[0]
-    assert token.key != new_token
     response = client.post(reverse_lazy("token-generator"), follow=True)
-    assert new_token.key not in response.content.decode("utf-8")
+    new_token = Token.objects.filter(user=user)[0]
+    assert new_token.key in response.content.decode("utf-8")
+    assert token.key not in response.content.decode("utf-8")
+    assert token.key != new_token
