@@ -13,8 +13,8 @@ setup(
     license_files=("LICENSE", "LICENSE.CNPLv7.md", "LICENSE.proprietary.md"),
     include_package_data=True,
     install_requires=[
-        "Django~=3.2.9",
-        "djangorestframework~=3.12.4",
+        "Django>=3.2.9",
+        "djangorestframework>=3.12.4",
         "djangorestframework-csv~=2.1.1",
         "pyyaml~=6.0",
     ],
