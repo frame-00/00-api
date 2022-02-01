@@ -6,14 +6,14 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('test_app', '0003_examplem2m'),
+        ("test_app", "0003_examplem2m"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='example',
-            name='excluded_field',
-            field=models.CharField(default='asdfasd', max_length=10),
+            model_name="example",
+            name="excluded_field",
+            field=models.CharField(default="asdfasd", max_length=10),
             preserve_default=False,
         ),
     ]

@@ -9,4 +9,6 @@ tox:
   stage: Testing
   script:
   - pip install tox-conda
+  - pip install black
+  - black --check .
   - tox

@@ -7,13 +7,18 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('test_app', '0004_add_excluded_field'),
+        ("test_app", "0004_add_excluded_field"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='exampleschild',
-            name='parent',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='children', related_query_name='children', to='test_app.example'),
+            model_name="exampleschild",
+            name="parent",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="children",
+                related_query_name="children",
+                to="test_app.example",
+            ),
         ),
     ]
