@@ -9,7 +9,7 @@ setup(
     author="Mikela Clemmons",
     author_email="glassresistor@gmail.com",
     url="",
-    packages=find_packages(exclude=["zerozero.tests", "test_app"]),
+    packages=find_packages(where="zerozero", exclude=["tests"]),
     license_files=("LICENSE", "LICENSE.CNPLv7.md", "LICENSE.proprietary.md"),
     include_package_data=True,
     install_requires=[
