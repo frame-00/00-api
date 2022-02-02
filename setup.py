@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from setuptools import setup, find_packages
+from setuptools import setup
 
 setup(
     name="00-api",
@@ -9,8 +9,7 @@ setup(
     author="Mikela Clemmons",
     author_email="glassresistor@gmail.com",
     url="",
-    packages=find_packages(where="zerozero", exclude=["tests"]),
-    package_dir={"": "zerozero"},
+    packages=["zerozero"],
     license_files=("LICENSE", "LICENSE.CNPLv7.md", "LICENSE.proprietary.md"),
     include_package_data=True,
     install_requires=[
