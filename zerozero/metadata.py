@@ -34,6 +34,7 @@ class ZeroZeroMetadata(SimpleMetadata):
 
             fields_metadata[field] = field_metadata
         metadata["fields"] = fields_metadata
+        metadata["url"] = request.build_absolute_uri(request.path_info)
         return metadata
 
 
