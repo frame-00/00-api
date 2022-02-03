@@ -4,7 +4,12 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views import View
+from django.views.generic.edit import CreateView
+
 from rest_framework.authtoken.models import Token
+
+from zerozero import forms
+from zerozero.models import QueryReport
 
 
 class TokenView(LoginRequiredMixin, View):
@@ -20,3 +25,9 @@ class TokenView(LoginRequiredMixin, View):
         self.context.update({"token": token.key})
         messages.success(request, token.key)
         return HttpResponseRedirect(reverse_lazy("token-generator"))
+
+
+class QueryReportCreate(LoginRequiredMixin, CreateView):
+    model = QueryReport
+    form = forms.QueryReportForm
+    fields = "__all__"

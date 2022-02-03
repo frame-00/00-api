@@ -6,7 +6,7 @@ from django import forms
 from django.db.models import Q
 
 
-class QueryForm(forms.Form):
+class QueryMixin(forms.Form):
     order = forms.JSONField(
         required=False
     )  # needs futher validation(list of django lookups
@@ -15,6 +15,14 @@ class QueryForm(forms.Form):
     )  # needs futher validation(list of django lookups
     where = forms.JSONField(required=False)
 
+    def clean_where(self):
+        where = self.cleaned_data.get("where", None)
+        if where:
+            q_expression = where_to_q(where)
+            return q_expression
+
+
+class QueryForm(QueryMixin, forms.Form):
     def __init__(self, model, query, *args, **kwargs):
         query = yaml.safe_load(query)
         data = {}
@@ -23,11 +31,10 @@ class QueryForm(forms.Form):
         self.model = model
         super().__init__(data, *args, **kwargs)
 
-    def clean_where(self):
-        where = self.cleaned_data.get("where", None)
-        if where:
-            q_expression = where_to_q(where)
-            return q_expression
+
+class QueryReportForm(QueryMixin, forms.ModelForm):
+    model = "zerozero.QueryReport"
+    fields = "__all__"
 
 
 STRING_TO_OPERATOR = {

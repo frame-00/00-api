@@ -13,19 +13,19 @@ def client_with_user(client):
 
 
 @pytest.mark.django_db
-def test_token_view(client_with_user):
+def test_token(client_with_user):
     client, user = client_with_user
     response = client.get(reverse_lazy("token-generator"))
     assert 200 == response.status_code, response.content
 
 
-def test_token_view_without_access(client):
+def test_token_without_access(client):
     response = client.get(reverse_lazy("token-generator"))
     assert 302 == response.status_code, response.content
 
 
 @pytest.mark.django_db
-def test_token_view_post(client_with_user):
+def test_token_post(client_with_user):
     client, user = client_with_user
     response = client.post(reverse_lazy("token-generator"), follow=True)
     assert 200 == response.status_code
@@ -36,7 +36,7 @@ def test_token_view_post(client_with_user):
 
 
 @pytest.mark.django_db
-def test_token_view_post_with_existing_token(client_with_user):
+def test_token_post_with_existing_token(client_with_user):
     client, user = client_with_user
     token = Token.objects.create(user=user)
     response = client.get(reverse_lazy("token-generator"))
@@ -46,3 +46,17 @@ def test_token_view_post_with_existing_token(client_with_user):
     assert new_token.key in response.content.decode("utf-8")
     assert token.key not in response.content.decode("utf-8")
     assert token.key != new_token
+
+
+@pytest.mark.django_db
+def test_query_report_post(client_with_user):
+    client, user = client_with_user
+    query_report = {
+        "name": "test",
+        "model": "test_app.Example",
+    }
+    response = client.post(
+        reverse_lazy("create-query-report"), query_report, follow=True
+    )
+    assert 200 == response.status_code
+    assert "foo" in response.content.decode("utf-8")
