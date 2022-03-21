@@ -12,7 +12,7 @@ class TokenView(LoginRequiredMixin, View):
     context = {}
 
     def get(self, request, *args, **kwargs):
-        return render(request, "token.html", self.context)
+        return render(request, "zerozero/token.html", self.context)
 
     def post(self, request, *args, **kwargs):
         Token.objects.filter(user=request.user).delete()
