@@ -27,6 +27,7 @@ setup(
             "pytest-cov~=3.0.0",
             "pytest-randomly~=3.10.2",
             "pytest-repeat~=0.9.1",
+            "click~=7.0",
             "black~=21.11b1",
         ]
     },
