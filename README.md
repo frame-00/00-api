@@ -20,7 +20,7 @@ REST_FRAMEWORK = {
 }
 ```
 
-Add to urlpatterns:
+Add to urlpatterns in urls:
 ```
 path("zerozero/api/", include("zerozero.api_urls")),
 ```
@@ -45,7 +45,7 @@ pip install -e git+https://gitlab.com/frame-00/00-api.git#egg=00-api
 ## Run test App
 ```
 ./manage.py migrate
-./manage,py runserver
+./manage.py runserver
 ```
 
 ## TODO
