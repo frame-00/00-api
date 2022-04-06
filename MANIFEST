@@ -10,3 +10,4 @@ zerozero/registry.py
 zerozero/serializers.py
 zerozero/urls.py
 recursive-include zerozero/templates *
+recursive-include zerozero/static *

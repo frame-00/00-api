@@ -1,0 +1,17 @@
+{% extends 'zerozero/base.html' %}
+
+{% block body %}
+<h3>Queries</h3>
+
+<a href={% url 'create-query-report' %}>New Query</a>
+<ul>
+<hr/>
+{% for object in object_list %}
+<li>{{ object.name}}</li>
+<li><a href={% url 'slug-query-report' slug=object.slug%}>{{ object.slug }}</a></li>
+<hr/>
+{% empty %}
+    <li>No queries saved yet.</li>
+{% endfor %}
+</ul>    
+{% endblock body %}

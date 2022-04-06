@@ -1,0 +1,15 @@
+{% extends 'zerozero/base.html' %}
+
+{% block head %}
+{% include "zerozero/query_includes.html" %}
+{% endblock head %}
+
+{% block body %}
+<div>
+    <a href={% url 'list-query-report' %}>Back to list</a>
+    <hr/>
+    <h3>Query</h3>
+    {% include "zerozero/queryreport_form.html" %}
+</div>
+{% endblock body %}
+

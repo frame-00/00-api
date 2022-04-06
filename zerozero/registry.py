@@ -4,7 +4,7 @@ REGISTERED_MODELS = {}
 def get_model_path(model):
     model_path = "%s.%s" % (
         model._meta.app_label,
-        model._meta.model_name.lower(),
+        model._meta.object_name,
     )
     return model_path
 

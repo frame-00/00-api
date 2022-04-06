@@ -1,0 +1,15 @@
+<form method="POST" action="" id="query-form">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <br/>
+  <button name="save">Save</button>
+  <button name="save-and-download" onclick="window.open(getUrl('format=csv'), '_blank')">
+    Save &#38; Download
+  </button>
+  <button name="download" type="button" onclick="window.open(getUrl('format=csv'), '_blank')" >
+    Download
+  </button>
+  <button name="copy-url" type="button" onclick="window.open(getUrl(), '_blank');">
+    Copy URL
+  </button>
+</form>

@@ -19,5 +19,5 @@ def test_register(MOCK_REGISTERED_MODELS):
     options = None
     registry.register(model, options)
     assert {
-        "test_app.example": {"model": model, "options": {}}
+        "test_app.Example": {"model": model, "options": {}}
     } == registry.REGISTERED_MODELS

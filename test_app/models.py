@@ -30,3 +30,14 @@ class ExampleM2M(models.Model):
 
 
 register(ExampleM2M)
+
+
+# model for testing queryset filtering in reports page
+class ExampleBetter(models.Model):
+    char1 = models.CharField(max_length=10)
+    char2 = models.CharField(max_length=10)
+    char3 = models.CharField(max_length=10)
+    char4 = models.CharField(max_length=10)
+
+
+register(ExampleBetter)

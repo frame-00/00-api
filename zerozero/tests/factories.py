@@ -19,3 +19,12 @@ class ExamplesChild(factory.django.DjangoModelFactory):
 class User(factory.django.DjangoModelFactory):
     class Meta:
         model = "auth.User"
+
+
+class QueryReport(factory.django.DjangoModelFactory):
+    name = factory.Sequence(lambda n: "test %03d" % n)
+    slug = name
+    model = "test_app.example"
+
+    class Meta:
+        model = "zerozero.queryreport"

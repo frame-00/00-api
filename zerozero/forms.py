@@ -1,9 +1,14 @@
 import json
 import yaml
-import operator
 
 from django import forms
-from django.db.models import Q
+
+from zerozero import models
+from zerozero.query import where_to_q
+from zerozero.registry import REGISTERED_MODELS
+
+
+MODEL_CHOICES = [(key, key) for key in REGISTERED_MODELS.keys()]
 
 
 class QueryForm(forms.Form):
@@ -30,21 +35,26 @@ class QueryForm(forms.Form):
             return q_expression
 
 
-STRING_TO_OPERATOR = {
-    "AND": operator.and_,
-    "OR": operator.or_,
-}
-OPERATOR_STRING = list(STRING_TO_OPERATOR.keys())
+class QueryReportForm(forms.ModelForm):
+    model = forms.ChoiceField(choices=MODEL_CHOICES, required=True)
 
+    order = forms.CharField(
+        required=False, widget=forms.Textarea
+    )  # needs futher validation(list of django lookups
+    fields = forms.CharField(
+        required=False, widget=forms.Textarea
+    )  # needs futher validation(list of django lookups
+    where = forms.CharField(required=False, widget=forms.Textarea)
 
-def where_to_q(where):
-    where_left, where_right = list(where.items())[0]
-    if where_left in OPERATOR_STRING[:2]:  # AND and OR have 2 arguments
-        first, second = where_right
-        first_q = where_to_q(first)
-        second_q = where_to_q(second)
-        operator = STRING_TO_OPERATOR[where_left]
-        return operator(first_q, second_q)
-    if where_left == "NOT":  # OR has just 1
-        return ~where_to_q(where_right)
-    return Q(**where)
+    def save(self, commit=True):
+        instance = self.instance
+        for field in ["where"]:
+            value = getattr(instance, field)
+            if value:
+                temp_yaml = yaml.safe_load(value)
+                setattr(instance, field, json.dumps(temp_yaml))
+        return super(QueryReportForm, self).save(commit=commit)
+
+    class Meta:
+        model = models.QueryReport
+        fields = "__all__"
