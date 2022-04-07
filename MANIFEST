@@ -11,3 +11,4 @@ zerozero/serializers.py
 zerozero/urls.py
 recursive-include zerozero/templates *
 recursive-include zerozero/static *
+recursive-include zerozero/migrations *
