@@ -38,3 +38,14 @@ def api_client_with_examples_child_access(api_client_with_user):
     user.user_permissions.add(permission)
     user.save()
     return api_client, user
+
+
+@pytest.fixture
+def api_client_with_example_better_access(api_client_with_user):
+    api_client, user = api_client_with_user
+    permission = auth_models.Permission.objects.get_by_natural_key(
+        "view_examplebetter", "test_app", "examplebetter"
+    )
+    user.user_permissions.add(permission)
+    user.save()
+    return api_client, user

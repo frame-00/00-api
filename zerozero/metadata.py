@@ -61,6 +61,7 @@ FIELD_TO_TYPE = {
     "ChoiceField": ("string", "select"),
     "EmailField": ("string", "email"),
     "URLField": ("string", "url"),
+    "JSONField": ("object", "json"),
     "ManyToManyField": ("object", "tomany-relation"),
     "ManyToManyRel": ("object", "manytomany-lists"),
     "GenericRelatedField": ("string", "generic-relation"),

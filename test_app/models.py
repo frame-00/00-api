@@ -38,6 +38,7 @@ class ExampleBetter(models.Model):
     char2 = models.CharField(max_length=10)
     char3 = models.CharField(max_length=10)
     char4 = models.CharField(max_length=10)
+    json_blob = models.JSONField(null=True)
 
 
 register(ExampleBetter)
