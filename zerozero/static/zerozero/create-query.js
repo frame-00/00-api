@@ -32,7 +32,15 @@ function copyUrl() {
 
 var editor = {};
 $(document).ready(function () {
-  editor["where"] = CodeMirror.fromTextArea($("textarea[name=where]")[0], { mode: 'yaml' });
-  editor["fields"] = CodeMirror.fromTextArea($("textarea[name=fields]")[0], { mode: 'yaml' });
-  editor["order"] = CodeMirror.fromTextArea($("textarea[name=order]")[0], { mode: 'yaml' });
+  var config = {
+    mode: 'yaml',
+    smartIndent: true,
+    tabSize: 4,
+    indentWithTabs: false,
+    lineNumbers: false,
+    theme: "duotone-light",
+  }
+  editor["where"] = CodeMirror.fromTextArea($("textarea[name=where]")[0], config);
+  editor["fields"] = CodeMirror.fromTextArea($("textarea[name=fields]")[0], config);
+  editor["order"] = CodeMirror.fromTextArea($("textarea[name=order]")[0], config);
 });
