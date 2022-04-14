@@ -15,7 +15,7 @@ urlpatterns = [
         name="slug-query-report",
     ),
     path(
-        "query-report/list",
+        "query-report",
         views.QueryReportList.as_view(),
         name="list-query-report",
     ),
