@@ -1,21 +1,17 @@
-function convertListToArray(list) {
-  return list ? list.replace(/\s*/g, '').split(',') : '';
-}
-
 function buildQuery() {
   var query = {};
 
-  var fields = $("textarea[name=fields]").val();
+  var fields = editor["fields"].getValue();
   if (fields) {
-    query['fields'] = convertListToArray(fields)
+    query['fields'] =  jsyaml.load(fields);
   }
 
-  var order = $("textarea[name=order]").val();
+  var order = editor["order"].getValue();
   if (order) {
-    query['order'] = convertListToArray(order)
+    query['order'] =  jsyaml.load(order);
   }
 
-  var where = editor.getValue();
+  var where = editor["where"].getValue();
   if (where) {
     query['where'] =  jsyaml.load(where);
   }
@@ -23,16 +19,28 @@ function buildQuery() {
   return encodeURI(JSON.stringify(query));
 }
 
-function getUrl(extra) {
+function getUrl() {
   var baseUrl = `${location.protocol}//${location.host}/zerozero/api/`;
   var modelName = $("select[name=model]").val();
   var query = buildQuery();
-  var extraFields = extra ? `&${encodeURI(extra)}` : '';
-
-  return `${baseUrl}${modelName}/?query=${query}${extraFields}`;
+  return `${baseUrl}${modelName}/?query=${query}&format=csv`;
 }
 
-var editor;
+function copyUrl() {
+  navigator.clipboard.writeText(getUrl());
+}
+
+var editor = {};
 $(document).ready(function () {
-  editor = CodeMirror.fromTextArea($("textarea[name=where]")[0], { mode: 'yaml' });
+  var config = {
+    mode: 'yaml',
+    smartIndent: true,
+    tabSize: 4,
+    indentWithTabs: false,
+    lineNumbers: false,
+    theme: "duotone-light",
+  }
+  editor["where"] = CodeMirror.fromTextArea($("textarea[name=where]")[0], config);
+  editor["fields"] = CodeMirror.fromTextArea($("textarea[name=fields]")[0], config);
+  editor["order"] = CodeMirror.fromTextArea($("textarea[name=order]")[0], config);
 });
