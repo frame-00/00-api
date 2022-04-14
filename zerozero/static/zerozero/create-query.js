@@ -3,20 +3,24 @@ function buildQuery() {
 
   var fields = editor["fields"].getValue();
   if (fields) {
-    query['fields'] =  jsyaml.load(fields);
+    query['fields'] = loadYaml(fields);
   }
 
   var order = editor["order"].getValue();
   if (order) {
-    query['order'] =  jsyaml.load(order);
+    query['order'] = loadYaml(order);
   }
 
   var where = editor["where"].getValue();
   if (where) {
-    query['where'] =  jsyaml.load(where);
+    query['where'] = loadYaml(where);
   }
 
   return encodeURI(JSON.stringify(query));
+}
+
+function loadYaml(string){
+  return jsyaml.load(string, indent=4);
 }
 
 function getUrl() {
@@ -39,6 +43,11 @@ $(document).ready(function () {
     indentWithTabs: false,
     lineNumbers: false,
     theme: "duotone-light",
+    extraKeys: {
+      "Tab": function(cm){
+        cm.replaceSelection("   " , "end");
+      }
+    }
   }
   editor["where"] = CodeMirror.fromTextArea($("textarea[name=where]")[0], config);
   editor["fields"] = CodeMirror.fromTextArea($("textarea[name=fields]")[0], config);
