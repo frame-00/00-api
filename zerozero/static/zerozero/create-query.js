@@ -15,7 +15,7 @@ function buildQuery() {
     query['order'] = convertListToArray(order)
   }
 
-  var where = $("textarea[name=where]").val();
+  var where = editor.getValue();
   if (where) {
     query['where'] =  jsyaml.load(where);
   }
@@ -32,6 +32,7 @@ function getUrl(extra) {
   return `${baseUrl}${modelName}/?query=${query}${extraFields}`;
 }
 
+var editor;
 $(document).ready(function () {
-  CodeMirror.fromTextArea($("textarea[name=where]")[0], { mode: 'yaml' });
+  editor = CodeMirror.fromTextArea($("textarea[name=where]")[0], { mode: 'yaml' });
 });
