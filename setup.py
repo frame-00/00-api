@@ -17,6 +17,8 @@ setup(
         "djangorestframework>=3.12.4",
         "djangorestframework-csv~=2.1.1",
         "pyyaml~=6.0",
+        "celery~=5.2.3",
+        "00-pilot @ git+https://gitlab.com/frame-00/00-pilot-snake.git",
     ],
     extras_require={
         "dev": [
