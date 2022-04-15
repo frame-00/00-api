@@ -1,13 +1,10 @@
 import pytest
 
-from csv import reader
-from io import StringIO
-
 from django.urls import reverse, reverse_lazy
 from rest_framework.authtoken.models import Token
 
-from zerozero import forms, models
-from zerozero.tests.factories import User, Example, QueryReport
+from zerozero import models
+from zerozero.tests.factories import User, Example
 
 
 @pytest.fixture
@@ -21,15 +18,15 @@ def example():
 
 @pytest.fixture
 def example_post_payload():
-    payload = {
+    return {
         "name": "test",
         "slug": "test",
         "model": "test_app.Example",
         "where": "char: char 001\n",
         "fields": "",
         "order": "",
+        "interval": 240,
     }
-    return payload
 
 
 @pytest.fixture
@@ -89,20 +86,19 @@ def test_query_report_post(example, example_post_payload, client_with_user):
         "slug": "test",
         "model": "test_app.Example",
         "where": '{"char": "char 001"}',
+        "interval": 240,
     }
 
     client, user = client_with_user
-    example_post_payload_with_save = {"save": ""}
-    example_post_payload_with_save.update(example_post_payload)
     response = client.post(
         reverse_lazy("create-query-report"),
-        example_post_payload_with_save,
+        example_post_payload,
         follow=True,
     )
+
     assert 200 == response.status_code
     model_objects = models.QueryReport.objects.all()
     assert 1 == len(model_objects)
-    # TODO: manually compare to json not payload
     assert (
         expected_payload.items()
         <= models.QueryReport.objects.values()[0].items()

@@ -1,5 +1,4 @@
 import factory
-from rest_framework.authtoken.models import Token
 
 
 class Example(factory.django.DjangoModelFactory):
@@ -25,6 +24,10 @@ class QueryReport(factory.django.DjangoModelFactory):
     name = factory.Sequence(lambda n: "test %03d" % n)
     slug = name
     model = "test_app.example"
+    where = "{'char': 'a'}"
+    fields = "char,excluded_field"
+    order = "-char"
+    interval = 60
 
     class Meta:
         model = "zerozero.queryreport"

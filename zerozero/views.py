@@ -15,7 +15,7 @@ from rest_framework.authtoken.models import Token
 
 from zerozero import forms
 from zerozero.models import QueryReport
-from zerozero.query import where_to_q
+from zerozero.query import json_to_yaml, where_to_q
 
 
 class TokenView(LoginRequiredMixin, View):
@@ -61,12 +61,7 @@ class QueryReportUpdate(LoginRequiredMixin, QueryReportMixin, UpdateView):
     def get_object(self, queryset=None):
         """Using get_object to convert where field from json to yaml for user input"""
         obj = super().get_object(queryset)
-        orig_value = getattr(obj, "where")
-        value = (
-            ""
-            if not orig_value
-            else yaml.dump(json.loads(orig_value), sort_keys=False)
-        )
+        value = json_to_yaml(getattr(obj, "where"))
         setattr(obj, "where", value)
         return obj
 
