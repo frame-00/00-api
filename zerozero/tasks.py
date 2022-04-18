@@ -5,16 +5,18 @@ from zerozero_pilot.warehouse import (
     get_ready_query_reports,
 )
 
-from zerozero import client
-
 
 @shared_task
 def query_report_task(report_id):
+    from zerozero import client
+
     run_query_report_task(report_id, settings.WAREHOUSE_DATABASE_URL, client)
 
 
 @shared_task
 def run_query_report_tasks():
+    from zerozero import client
+
     report_ids = get_ready_query_reports(client)
 
     for report_id in report_ids:
