@@ -1,9 +1,25 @@
 import pytest
+import sys
 
+from django.conf import settings
 from django.contrib.auth import models as auth_models
 from rest_framework.test import APIClient
 
 from zerozero.tests import factories
+
+
+# Need to mock this before anything else loads
+client_module = type(sys)("zerozero.client")
+sys.modules["zerozero.client"] = client_module
+
+
+@pytest.fixture
+def mock_zerozero_client():
+    from zerozero import client
+
+    client.models = []
+    settings.WAREHOUSE_DATABASE_URL = "postgres:///some_db"
+    return client
 
 
 @pytest.fixture
