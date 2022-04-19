@@ -63,6 +63,7 @@ $(document).ready(function () {
   fields.val(jsyaml.dump(JSON.parse(fields.val())));
   order.val(jsyaml.dump(JSON.parse(order.val())));
   $("button[name=save]").click(yamlToJson)
+  $("button[name=save-and-download]").click(yamlToJson)
   editor["where"] = CodeMirror.fromTextArea(where[0], config);
   editor["fields"] = CodeMirror.fromTextArea(fields[0], config);
   editor["order"] = CodeMirror.fromTextArea(order[0], config);
