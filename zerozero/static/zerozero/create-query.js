@@ -35,9 +35,18 @@ function copyUrl() {
 }
 function yamlToJson(ev) {
   ev.preventDefault();
-  editor["where"].getDoc().setValue(JSON.stringify(jsyaml.load(editor["where"].getDoc().getValue())));
-  editor["fields"].getDoc().setValue(JSON.stringify(jsyaml.load(editor["fields"].getDoc().getValue())));
-  editor["order"].getDoc().setValue(JSON.stringify(jsyaml.load(editor["order"].getDoc().getValue())));
+  var where_txt = JSON.stringify(jsyaml.load(editor["where"].getDoc().getValue()));
+  if (typeof(where_txt) != "undefined") {
+    editor["where"].getDoc().setValue(where_txt);
+  }
+  var fields_txt = JSON.stringify(jsyaml.load(editor["fields"].getDoc().getValue()))
+  if (typeof(fields_txt) != "undefined") {
+    editor["fields"].getDoc().setValue(fields_txt);
+  }
+  var order_txt = JSON.stringify(jsyaml.load(editor["order"].getDoc().getValue()))
+  if (typeof(order_txt) != "undefined") {
+    editor["order"].getDoc().setValue(order_txt);
+  }
   $(this).unbind();
   $(this).click();
 }
