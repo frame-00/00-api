@@ -22,7 +22,7 @@ def example_post_payload():
         "name": "test",
         "slug": "test",
         "model": "test_app.Example",
-        "where": "char: char 001\n",
+        "where": '{ "char": "char 001"}',
         "fields": "",
         "order": "",
         "interval": 240,
@@ -85,7 +85,7 @@ def test_query_report_post(example, example_post_payload, client_with_user):
         "name": "test",
         "slug": "test",
         "model": "test_app.Example",
-        "where": '{"char": "char 001"}',
+        "where": {"char": "char 001"},
         "interval": 240,
     }
 
