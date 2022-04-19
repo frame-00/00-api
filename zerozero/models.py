@@ -15,9 +15,9 @@ class QueryReport(models.Model):
     name = models.CharField(unique=True, max_length=255)
     slug = models.SlugField(unique=True)
     model = models.CharField(max_length=255)
-    fields = models.JSONField(blank=True, null=True)
-    order = models.JSONField(blank=True, null=True)
-    where = models.JSONField(blank=True, null=True)
+    fields = models.JSONField(blank=True, null=True, default=[])
+    order = models.JSONField(blank=True, null=True, default=[])
+    where = models.JSONField(blank=True, null=True, default={})
     interval = models.IntegerField(
         blank=True, null=True, choices=INTERVAL_CHOICES
     )

@@ -38,9 +38,9 @@ class QueryReportForm(forms.ModelForm):
     model = forms.ChoiceField(choices=MODEL_CHOICES, required=True)
 
     # needs futher validation (list of django lookups)
-    fields = forms.CharField(required=False, widget=forms.Textarea)
-    order = forms.CharField(required=False, widget=forms.Textarea)
-    where = forms.CharField(required=False, widget=forms.Textarea)
+    fields = forms.CharField(required=False, widget=forms.Textarea, initial=[])
+    order = forms.CharField(required=False, widget=forms.Textarea, initial=[])
+    where = forms.CharField(required=False, widget=forms.Textarea, initial={})
 
     def clean_where(self):
         where = self.cleaned_data.get("where", None)
