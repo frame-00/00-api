@@ -33,7 +33,14 @@ function getUrl() {
 function copyUrl() {
   navigator.clipboard.writeText(getUrl());
 }
-
+function yamlToJson(ev) {
+  ev.preventDefault();
+  editor["where"].getDoc().setValue(JSON.stringify(jsyaml.load(editor["where"].getDoc().getValue())));
+  editor["fields"].getDoc().setValue(JSON.stringify(jsyaml.load(editor["fields"].getDoc().getValue())));
+  editor["order"].getDoc().setValue(JSON.stringify(jsyaml.load(editor["order"].getDoc().getValue())));
+  $(this).unbind();
+  $(this).click();
+}
 var editor = {};
 $(document).ready(function () {
   var config = {
@@ -55,6 +62,8 @@ $(document).ready(function () {
   where.val(jsyaml.dump(JSON.parse(where.val())));
   fields.val(jsyaml.dump(JSON.parse(fields.val())));
   order.val(jsyaml.dump(JSON.parse(order.val())));
+  $("button[name=save]").click(yamlToJson)
+  $("button[name=save-and-download]").click(yamlToJson)
   editor["where"] = CodeMirror.fromTextArea(where[0], config);
   editor["fields"] = CodeMirror.fromTextArea(fields[0], config);
   editor["order"] = CodeMirror.fromTextArea(order[0], config);

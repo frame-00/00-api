@@ -24,7 +24,7 @@ yaml.SafeLoader.yaml_implicit_resolvers = {
 
 def load_yaml(value):
     yaml_value = yaml.load(value, Loader=yaml.SafeLoader)
-    return json.dumps(yaml_value)
+    return yaml_value
 
 
 def operation_reducer(clause1, clause2):
