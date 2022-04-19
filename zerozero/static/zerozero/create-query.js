@@ -35,12 +35,9 @@ function copyUrl() {
 }
 function yamlToJson(ev) {
   ev.preventDefault();
-  var where = $("textarea[name=where]");
-  var fields = $("textarea[name=fields]");
-  var order = $("textarea[name=order]");
-  editor["where"].getDoc().setValue(JSON.stringify(jsyaml.load(where.val())));
-  editor["fields"].getDoc().setValue(fields.val(jsyaml.dump(JSON.parse(fields.val())));
-  editor["order"].getDoc().setValue(order.val(jsyaml.dump(JSON.parse(order.val())));
+  editor["where"].getDoc().setValue(JSON.stringify(jsyaml.load(editor["where"].getDoc().getValue())));
+  editor["fields"].getDoc().setValue(JSON.stringify(jsyaml.load(editor["fields"].getDoc().getValue())));
+  editor["order"].getDoc().setValue(JSON.stringify(jsyaml.load(editor["order"].getDoc().getValue())));
   $(this).unbind();
   $(this).click();
 }
