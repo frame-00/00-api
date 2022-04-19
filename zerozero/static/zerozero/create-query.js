@@ -49,7 +49,13 @@ $(document).ready(function () {
       }
     }
   }
-  editor["where"] = CodeMirror.fromTextArea($("textarea[name=where]")[0], config);
-  editor["fields"] = CodeMirror.fromTextArea($("textarea[name=fields]")[0], config);
-  editor["order"] = CodeMirror.fromTextArea($("textarea[name=order]")[0], config);
+  var where = $("textarea[name=where]");
+  var fields = $("textarea[name=fields]");
+  var order = $("textarea[name=order]");
+  where.val(jsyaml.dump(JSON.parse(where.val())));
+  fields.val(jsyaml.dump(JSON.parse(fields.val())));
+  order.val(jsyaml.dump(JSON.parse(order.val())));
+  editor["where"] = CodeMirror.fromTextArea(where[0], config);
+  editor["fields"] = CodeMirror.fromTextArea(fields[0], config);
+  editor["order"] = CodeMirror.fromTextArea(order[0], config);
 });

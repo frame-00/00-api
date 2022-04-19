@@ -110,8 +110,3 @@ def test_query_report_post(example, example_post_payload, client_with_user):
             kwargs={"slug": "test"},
         ),
     )
-    # TODO: check slug, check data output, check if saved (should not be)
-    assert (
-        example_post_payload.items()
-        <= vars(response.context_data["object"]).items()
-    )

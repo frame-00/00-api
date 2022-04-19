@@ -22,29 +22,9 @@ yaml.SafeLoader.yaml_implicit_resolvers = {
 }
 
 
-# def quoteless_presenter(dumper, data):
-#     return dumper.represent_scalar(
-#         yaml.resolver.BaseResolver.DEFAULT_SCALAR_TAG, data, style=""
-#     )
-
-
-# yaml.add_representer(datetime, quoteless_presenter)
-
-
-def yaml_to_json(value):
-    if not value:
-        return None
-
+def load_yaml(value):
     yaml_value = yaml.load(value, Loader=yaml.SafeLoader)
     return json.dumps(yaml_value)
-
-
-def json_to_yaml(value):
-    if not value:
-        return ""
-
-    json_value = json.loads(value)
-    return yaml.dump(json_value, sort_keys=False)
 
 
 def operation_reducer(clause1, clause2):
