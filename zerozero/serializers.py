@@ -157,7 +157,7 @@ class ZeroZeroSerializer:
         # _value is added to the above fields b/c Python garbase collects them
         # if the match properties in class Meta below
 
-        class ModelSerializer(SerializerBaseClass):
+        class ModelSerializer(cls.SerializerBaseClass):
             @property
             def __class__(self):
                 return cls
