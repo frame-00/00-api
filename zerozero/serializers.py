@@ -146,6 +146,8 @@ class _ZeroZeroSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class ZeroZeroSerializer:
+    SerializerBaseClass = _ZeroZeroSerializer
+
     def __new__(cls, *args, **kwargs):
         Model = kwargs.pop("model")
         model_path = get_model_path(Model)
@@ -155,7 +157,7 @@ class ZeroZeroSerializer:
         # _value is added to the above fields b/c Python garbase collects them
         # if the match properties in class Meta below
 
-        class ModelSerializer(_ZeroZeroSerializer):
+        class ModelSerializer(cls.SerializerBaseClass):
             @property
             def __class__(self):
                 return cls
